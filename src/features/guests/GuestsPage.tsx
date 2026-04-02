@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   Grid,
   Card,
@@ -45,6 +46,7 @@ import { formatDate, getInitials } from '../../utils/helpers';
 import type { Guest, RoomType, FoodType } from '../../types';
 
 const GuestsPage: React.FC = () => {
+  const location = useLocation();
   const { guests, bookings, rooms, addGuest, updateGuest, deleteGuest } = useData();
   const { hasPermission } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
@@ -54,6 +56,20 @@ const GuestsPage: React.FC = () => {
   const [guestToDelete, setGuestToDelete] = useState<Guest | null>(null);
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+
+  // Handle incoming navigation state to open specific guest modal
+  useEffect(() => {
+    const state = location.state as { selectedGuestId?: string } | null;
+    if (state?.selectedGuestId) {
+      const guest = guests.find(g => g.id === state.selectedGuestId);
+      if (guest) {
+        setSelectedGuest(guest);
+        setDetailDialogOpen(true);
+      }
+      // Clear the state to prevent reopening on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state, guests]);
 
   // Form state
   const [formData, setFormData] = useState({

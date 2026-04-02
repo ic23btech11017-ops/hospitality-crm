@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -13,6 +14,8 @@ import {
   ChevronRight as ChevronRightIcon,
   Today as TodayIcon,
   Circle as CircleIcon,
+  Phone as PhoneIcon,
+  Email as EmailIcon,
 } from '@mui/icons-material';
 import { addDays, format, differenceInDays, parseISO, startOfDay } from 'date-fns';
 import { useData } from '../../contexts/DataContext';
@@ -49,6 +52,7 @@ const sourceLabels: Record<string, string> = {
 
 const RoomTimeline: React.FC = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const { rooms, bookings, guests } = useData();
   const [startOffset, setStartOffset] = useState(-2); // days from today
 
@@ -303,16 +307,44 @@ const RoomTimeline: React.FC = () => {
                   {roomBookings.map(({ booking, guest, startCol, spanCols }) => {
                     const colors = statusColors[booking.status] || statusColors.confirmed;
                     const nights = differenceInDays(parseISO(booking.checkOut), parseISO(booking.checkIn));
+                    
+                    const handleGuestClick = (e: React.MouseEvent) => {
+                      e.stopPropagation();
+                      if (guest) {
+                        navigate('/guests', { state: { selectedGuestId: guest.id } });
+                      }
+                    };
+                    
                     return (
                       <Tooltip
                         key={booking.id}
                         arrow
                         title={
                           <Box sx={{ p: 0.5 }}>
-                            <Typography variant="body2" fontWeight={600}>
+                            <Typography 
+                              variant="body2" 
+                              fontWeight={600}
+                              sx={{ 
+                                cursor: guest ? 'pointer' : 'default',
+                                '&:hover': guest ? { textDecoration: 'underline' } : {},
+                              }}
+                              onClick={handleGuestClick}
+                            >
                               {guest?.name || 'Unknown Guest'}
                             </Typography>
-                            <Typography variant="caption" display="block">
+                            {guest?.phone && (
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
+                                <PhoneIcon sx={{ fontSize: 12 }} />
+                                <Typography variant="caption">{guest.phone}</Typography>
+                              </Box>
+                            )}
+                            {guest?.email && (
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                <EmailIcon sx={{ fontSize: 12 }} />
+                                <Typography variant="caption">{guest.email}</Typography>
+                              </Box>
+                            )}
+                            <Typography variant="caption" display="block" sx={{ mt: 0.5 }}>
                               {format(parseISO(booking.checkIn), 'MMM d')} → {format(parseISO(booking.checkOut), 'MMM d')} ({nights} {nights === 1 ? 'night' : 'nights'})
                             </Typography>
                             <Typography variant="caption" display="block">
@@ -330,10 +362,26 @@ const RoomTimeline: React.FC = () => {
                                 color: colors.text,
                               }}
                             />
+                            {guest && (
+                              <Typography 
+                                variant="caption" 
+                                display="block" 
+                                sx={{ 
+                                  mt: 1, 
+                                  color: 'primary.light',
+                                  cursor: 'pointer',
+                                  '&:hover': { textDecoration: 'underline' },
+                                }}
+                                onClick={handleGuestClick}
+                              >
+                                Click to view guest profile →
+                              </Typography>
+                            )}
                           </Box>
                         }
                       >
                         <Box
+                          onClick={handleGuestClick}
                           sx={{
                             position: 'absolute',
                             left: startCol * DAY_WIDTH + 4,
