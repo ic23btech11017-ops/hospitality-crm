@@ -27,7 +27,6 @@ import {
   MenuBook as MenuBookIcon,
   LocalDining as CateringIcon,
   ChevronLeft as ChevronLeftIcon,
-  Sync as IntegrationsIcon,
 } from '@mui/icons-material';
 
 
@@ -54,7 +53,6 @@ const navItems: NavItem[] = [
   },
   { id: 'guests', label: 'Guests', icon: <PeopleIcon />, path: '/guests' },
   { id: 'billing', label: 'Billing', icon: <ReceiptIcon />, path: '/billing' },
-  { id: 'integrations', label: 'Integrations', icon: <IntegrationsIcon />, path: '/integrations' },
 ];
 
 interface SidebarProps {
