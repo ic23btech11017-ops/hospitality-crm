@@ -2,178 +2,364 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
-  Card,
-  CardContent,
   TextField,
   Button,
   Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Alert,
+  Checkbox,
+  FormControlLabel,
+  Link,
   InputAdornment,
   IconButton,
 } from '@mui/material';
 import {
   Visibility,
   VisibilityOff,
+  Email as EmailIcon,
+  Lock as LockIcon,
   Hotel as HotelIcon,
+  Event as EventIcon,
+  Restaurant as RestaurantIcon,
+  People as PeopleIcon,
+  Login as LoginIcon,
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
-import type { UserRole } from '../../types';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [email, setEmail] = useState('admin@hotel.com');
   const [password, setPassword] = useState('demo123');
-  const [role, setRole] = useState<UserRole>('admin');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    try {
-      const success = await login(email, password, role);
-      if (success) {
-        navigate('/dashboard');
-      } else {
-        setError('Invalid credentials');
-      }
-    } catch {
-      setError('An error occurred. Please try again.');
-    } finally {
-      setLoading(false);
+    const success = await login(email, password, 'admin');
+    if (success) {
+      navigate('/dashboard');
     }
   };
 
+  const features = [
+    { icon: <HotelIcon />, title: 'Room & Booking Management', color: '#00BCD4' },
+    { icon: <EventIcon />, title: 'Event Planning & Scheduling', color: '#3B82F6' },
+    { icon: <RestaurantIcon />, title: 'Food & Catering Services', color: '#10B981' },
+    { icon: <PeopleIcon />, title: 'Guest CRM & Analytics', color: '#8B5CF6' },
+  ];
+
   return (
-    <Box
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(135deg, #1e3a5f 0%, #2d5a87 50%, #3d7ab5 100%)',
-        p: 2,
-      }}
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+    <Box sx={{ display: 'flex', minHeight: '100vh', overflow: 'hidden' }}>
+      {/* Left Side - Dark Section */}
+      <Box
+        sx={{
+          width: '50%',
+          background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
+          color: 'white',
+          p: 6,
+          display: { xs: 'none', lg: 'flex' },
+          flexDirection: 'column',
+          justifyContent: 'center',
+          position: 'relative',
+        }}
       >
-        <Card sx={{ maxWidth: 440, width: '100%' }}>
-          <CardContent sx={{ p: 4 }}>
-            {/* Logo */}
-            <Box sx={{ textAlign: 'center', mb: 4 }}>
-              <Box
-                sx={{
-                  width: 64,
-                  height: 64,
-                  borderRadius: 3,
-                  background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  mx: 'auto',
-                  mb: 2,
-                }}
+        <Box sx={{ maxWidth: 600, mx: 'auto' }}>
+          {/* Logo */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 8 }}>
+            <Box
+              sx={{
+                width: 56,
+                height: 56,
+                borderRadius: 2.5,
+                background: '#0ea5e9',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1.75rem',
+                fontWeight: 700,
+              }}
+            >
+              K
+            </Box>
+            <Typography variant="h4" fontWeight={700} sx={{ letterSpacing: '1px' }}>
+              KALNET
+            </Typography>
+          </Box>
+
+          {/* Main Content */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Typography
+              variant="h2"
+              fontWeight={700}
+              sx={{
+                mb: 4,
+                fontSize: '3.5rem',
+                lineHeight: 1.1,
+              }}
+            >
+              The Digital Operating System for Modern Hotels
+            </Typography>
+            <Typography
+              variant="h6"
+              sx={{
+                mb: 8,
+                color: 'rgba(255,255,255,0.75)',
+                fontWeight: 400,
+                lineHeight: 1.7,
+                fontSize: '1.125rem',
+              }}
+            >
+              Manage rooms, events, catering, and guest relations — all from one powerful dashboard.
+            </Typography>
+          </motion.div>
+
+          {/* Feature Cards */}
+          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3, mb: 8 }}>
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
               >
-                <HotelIcon sx={{ color: 'white', fontSize: 32 }} />
-              </Box>
-              <Typography variant="h5" fontWeight={700} gutterBottom>
-                Hospitality CRM
+                <Box
+                  sx={{
+                    background: 'rgba(255,255,255,0.05)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 3,
+                    p: 3,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      background: 'rgba(255,255,255,0.08)',
+                      transform: 'translateY(-4px)',
+                      borderColor: feature.color,
+                    },
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 2,
+                      background: `${feature.color}20`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      mb: 2,
+                      color: feature.color,
+                      '& svg': { fontSize: 24 },
+                    }}
+                  >
+                    {feature.icon}
+                  </Box>
+                  <Typography variant="body1" fontWeight={500} sx={{ fontSize: '0.95rem' }}>
+                    {feature.title}
+                  </Typography>
+                </Box>
+              </motion.div>
+            ))}
+          </Box>
+
+          {/* Stats */}
+          <Box sx={{ display: 'flex', gap: 8 }}>
+            <Box>
+              <Typography variant="h3" fontWeight={700} sx={{ fontSize: '3rem' }}>
+                10+
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Sign in to manage your hotel operations
+              <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.6)', mt: 0.5 }}>
+                Modules
               </Typography>
             </Box>
-
-            {/* Demo Notice */}
-            <Alert severity="info" sx={{ mb: 3 }}>
-              <Typography variant="body2">
-                <strong>Demo Mode:</strong> Select any role and click Sign In. No real authentication required.
+            <Box>
+              <Typography variant="h3" fontWeight={700} sx={{ fontSize: '3rem' }}>
+                5+
               </Typography>
-            </Alert>
+              <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.6)', mt: 0.5 }}>
+                Integrations
+              </Typography>
+            </Box>
+            <Box>
+              <Typography variant="h3" fontWeight={700} sx={{ fontSize: '3rem' }}>
+                99.9%
+              </Typography>
+              <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.6)', mt: 0.5 }}>
+                Uptime
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
 
-            {error && (
-              <Alert severity="error" sx={{ mb: 3 }}>
-                {error}
-              </Alert>
-            )}
+      {/* Right Side - Login Form */}
+      <Box
+        sx={{
+          width: { xs: '100%', lg: '50%' },
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          p: 4,
+          bgcolor: 'background.default',
+        }}
+      >
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          style={{ width: '100%', maxWidth: 480 }}
+        >
+          <Box sx={{ mb: 8 }}>
+            <Typography variant="h3" fontWeight={700} gutterBottom sx={{ fontSize: '2.5rem' }}>
+              Welcome back
+            </Typography>
+            <Typography variant="body1" color="text.secondary" sx={{ fontSize: '1rem' }}>
+              Enter your credentials to access your account
+            </Typography>
+          </Box>
 
-            <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="body1" fontWeight={600} sx={{ mb: 1.5, color: 'text.primary' }}>
+                Email Address
+              </Typography>
               <TextField
                 fullWidth
-                label="Email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                margin="normal"
+                placeholder="admin@hotel.com"
                 required
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <EmailIcon sx={{ color: 'text.secondary', fontSize: 22 }} />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2.5,
+                    fontSize: '1rem',
+                  },
+                  '& .MuiOutlinedInput-input': {
+                    py: 1.75,
+                  },
+                }}
               />
+            </Box>
 
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="body1" fontWeight={600} sx={{ mb: 1.5, color: 'text.primary' }}>
+                Password
+              </Typography>
               <TextField
                 fullWidth
-                label="Password"
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                margin="normal"
+                placeholder="••••••••"
                 required
                 InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LockIcon sx={{ color: 'text.secondary', fontSize: 22 }} />
+                    </InputAdornment>
+                  ),
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
                         onClick={() => setShowPassword(!showPassword)}
                         edge="end"
+                        size="small"
                       >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                        {showPassword ? (
+                          <VisibilityOff sx={{ fontSize: 22 }} />
+                        ) : (
+                          <Visibility sx={{ fontSize: 22 }} />
+                        )}
                       </IconButton>
                     </InputAdornment>
                   ),
                 }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2.5,
+                    fontSize: '1rem',
+                  },
+                  '& .MuiOutlinedInput-input': {
+                    py: 1.75,
+                  },
+                }}
               />
+            </Box>
 
-              <FormControl fullWidth margin="normal">
-                <InputLabel>Login as</InputLabel>
-                <Select
-                  value={role}
-                  label="Login as"
-                  onChange={(e) => setRole(e.target.value as UserRole)}
-                >
-                  <MenuItem value="admin">Administrator</MenuItem>
-                  <MenuItem value="front_desk">Front Desk Staff</MenuItem>
-                  <MenuItem value="event_manager">Event Manager</MenuItem>
-                  <MenuItem value="manager">General Manager</MenuItem>
-                </Select>
-              </FormControl>
-
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                size="large"
-                disabled={loading}
-                sx={{ mt: 3, mb: 2, py: 1.5 }}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 5 }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    size="small"
+                  />
+                }
+                label={
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.9rem' }}>
+                    Remember me
+                  </Typography>
+                }
+              />
+              <Link
+                href="#"
+                variant="body2"
+                sx={{
+                  color: '#0ea5e9',
+                  textDecoration: 'none',
+                  fontWeight: 500,
+                  fontSize: '0.9rem',
+                  '&:hover': { textDecoration: 'underline' },
+                }}
               >
-                {loading ? 'Signing in...' : 'Sign In'}
-              </Button>
-            </form>
+                Forgot password?
+              </Link>
+            </Box>
 
-            <Typography variant="caption" color="text.secondary" textAlign="center" display="block">
-              © 2024 Hospitality CRM System
-            </Typography>
-          </CardContent>
-        </Card>
-      </motion.div>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              size="large"
+              endIcon={<LoginIcon />}
+              sx={{
+                py: 2,
+                borderRadius: 2.5,
+                background: '#0ea5e9',
+                fontSize: '1.05rem',
+                fontWeight: 600,
+                textTransform: 'none',
+                boxShadow: '0 4px 14px 0 rgba(14, 165, 233, 0.4)',
+                '&:hover': {
+                  background: '#0284c7',
+                  boxShadow: '0 6px 20px 0 rgba(14, 165, 233, 0.5)',
+                },
+              }}
+            >
+              Sign in
+            </Button>
+          </form>
+
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ display: 'block', textAlign: 'center', mt: 8, fontSize: '0.85rem' }}
+          >
+            © 2026 KALNET. All rights reserved.
+          </Typography>
+        </motion.div>
+      </Box>
     </Box>
   );
 };
