@@ -56,32 +56,32 @@ const LoginPage: React.FC = () => {
           width: '50%',
           background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
           color: 'white',
-          p: 5,
+          p: 4,
           display: { xs: 'none', lg: 'flex' },
           flexDirection: 'column',
           justifyContent: 'center',
           position: 'relative',
         }}
       >
-        <Box sx={{ maxWidth: 560, mx: 'auto' }}>
+        <Box sx={{ maxWidth: 480, mx: 'auto' }}>
           {/* Logo */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 4 }}>
             <Box
               sx={{
-                width: 48,
-                height: 48,
-                borderRadius: 2,
+                width: 36,
+                height: 36,
+                borderRadius: 1.5,
                 background: '#0ea5e9',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '1.5rem',
+                fontSize: '1.1rem',
                 fontWeight: 700,
               }}
             >
               K
             </Box>
-            <Typography variant="h5" fontWeight={700} sx={{ letterSpacing: '0.5px' }}>
+            <Typography variant="body1" fontWeight={700} sx={{ letterSpacing: '0.5px', fontSize: '0.95rem' }}>
               KALNET
             </Typography>
           </Box>
@@ -93,32 +93,31 @@ const LoginPage: React.FC = () => {
             transition={{ duration: 0.6 }}
           >
             <Typography
-              variant="h3"
               fontWeight={700}
               sx={{
-                mb: 2.5,
-                fontSize: '2.75rem',
-                lineHeight: 1.15,
+                mb: 1.5,
+                fontSize: '1.75rem',
+                lineHeight: 1.2,
               }}
             >
               The Digital Operating System for Modern Hotels
             </Typography>
             <Typography
-              variant="body1"
+              variant="body2"
               sx={{
-                mb: 5,
-                color: 'rgba(255,255,255,0.75)',
+                mb: 3,
+                color: 'rgba(255,255,255,0.65)',
                 fontWeight: 400,
-                lineHeight: 1.6,
-                fontSize: '1rem',
+                lineHeight: 1.5,
+                fontSize: '0.85rem',
               }}
             >
               Manage rooms, events, catering, and guest relations — all from one powerful dashboard.
             </Typography>
           </motion.div>
 
-          {/* Feature Cards */}
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2.5, mb: 5 }}>
+          {/* Feature Cards - Horizontal layout like reference */}
+          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 1.5, mb: 4 }}>
             {features.map((feature, index) => (
               <motion.div
                 key={index}
@@ -129,35 +128,36 @@ const LoginPage: React.FC = () => {
                 <Box
                   sx={{
                     background: 'rgba(255,255,255,0.05)',
-                    backdropFilter: 'blur(10px)',
                     border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: 2.5,
-                    p: 2.5,
+                    borderRadius: 2,
+                    p: 1.5,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1.5,
                     transition: 'all 0.3s ease',
                     '&:hover': {
                       background: 'rgba(255,255,255,0.08)',
-                      transform: 'translateY(-4px)',
                       borderColor: feature.color,
                     },
                   }}
                 >
                   <Box
                     sx={{
-                      width: 42,
-                      height: 42,
-                      borderRadius: 2,
+                      width: 32,
+                      height: 32,
+                      borderRadius: 1.5,
                       background: `${feature.color}20`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      mb: 1.5,
+                      flexShrink: 0,
                       color: feature.color,
-                      '& svg': { fontSize: 22 },
+                      '& svg': { fontSize: 16 },
                     }}
                   >
                     {feature.icon}
                   </Box>
-                  <Typography variant="body2" fontWeight={500} sx={{ fontSize: '0.875rem' }}>
+                  <Typography sx={{ fontSize: '0.75rem', fontWeight: 500, lineHeight: 1.3 }}>
                     {feature.title}
                   </Typography>
                 </Box>
@@ -166,28 +166,28 @@ const LoginPage: React.FC = () => {
           </Box>
 
           {/* Stats */}
-          <Box sx={{ display: 'flex', gap: 6 }}>
+          <Box sx={{ display: 'flex', gap: 4 }}>
             <Box>
-              <Typography variant="h4" fontWeight={700} sx={{ fontSize: '2.25rem' }}>
+              <Typography fontWeight={700} sx={{ fontSize: '1.25rem' }}>
                 10+
               </Typography>
-              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>
+              <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem' }}>
                 Modules
               </Typography>
             </Box>
             <Box>
-              <Typography variant="h4" fontWeight={700} sx={{ fontSize: '2.25rem' }}>
+              <Typography fontWeight={700} sx={{ fontSize: '1.25rem' }}>
                 5+
               </Typography>
-              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>
+              <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem' }}>
                 Integrations
               </Typography>
             </Box>
             <Box>
-              <Typography variant="h4" fontWeight={700} sx={{ fontSize: '2.25rem' }}>
+              <Typography fontWeight={700} sx={{ fontSize: '1.25rem' }}>
                 99.9%
               </Typography>
-              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.875rem' }}>
+              <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem' }}>
                 Uptime
               </Typography>
             </Box>
@@ -210,20 +210,20 @@ const LoginPage: React.FC = () => {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
-          style={{ width: '100%', maxWidth: 440 }}
+          style={{ width: '100%', maxWidth: 380 }}
         >
-          <Box sx={{ mb: 5 }}>
-            <Typography variant="h4" fontWeight={700} gutterBottom sx={{ fontSize: '2rem' }}>
+          <Box sx={{ mb: 3 }}>
+            <Typography fontWeight={700} sx={{ mb: 0.5, fontSize: '1.5rem' }}>
               Welcome back
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.9rem' }}>
+            <Typography color="text.secondary" sx={{ fontSize: '0.8rem' }}>
               Enter your credentials to access your account
             </Typography>
           </Box>
 
           <form onSubmit={handleSubmit}>
-            <Box sx={{ mb: 2.5 }}>
-              <Typography variant="body2" fontWeight={600} sx={{ mb: 1, color: 'text.primary' }}>
+            <Box sx={{ mb: 2 }}>
+              <Typography sx={{ mb: 0.75, color: 'text.primary', fontSize: '0.8rem', fontWeight: 500 }}>
                 Email Address
               </Typography>
               <TextField
@@ -233,26 +233,28 @@ const LoginPage: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@hotel.com"
                 required
+                size="small"
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <EmailIcon sx={{ color: 'text.secondary', fontSize: 20 }} />
+                      <EmailIcon sx={{ color: 'text.secondary', fontSize: 18 }} />
                     </InputAdornment>
                   ),
                 }}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: 2,
+                    borderRadius: 1.5,
+                    fontSize: '0.875rem',
                   },
                   '& .MuiOutlinedInput-input': {
-                    py: 1.5,
+                    py: 1.25,
                   },
                 }}
               />
             </Box>
 
-            <Box sx={{ mb: 2.5 }}>
-              <Typography variant="body2" fontWeight={600} sx={{ mb: 1, color: 'text.primary' }}>
+            <Box sx={{ mb: 2 }}>
+              <Typography sx={{ mb: 0.75, color: 'text.primary', fontSize: '0.8rem', fontWeight: 500 }}>
                 Password
               </Typography>
               <TextField
@@ -262,10 +264,11 @@ const LoginPage: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
+                size="small"
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <LockIcon sx={{ color: 'text.secondary', fontSize: 20 }} />
+                      <LockIcon sx={{ color: 'text.secondary', fontSize: 18 }} />
                     </InputAdornment>
                   ),
                   endAdornment: (
@@ -276,9 +279,9 @@ const LoginPage: React.FC = () => {
                         size="small"
                       >
                         {showPassword ? (
-                          <VisibilityOff sx={{ fontSize: 20 }} />
+                          <VisibilityOff sx={{ fontSize: 18 }} />
                         ) : (
-                          <Visibility sx={{ fontSize: 20 }} />
+                          <Visibility sx={{ fontSize: 18 }} />
                         )}
                       </IconButton>
                     </InputAdornment>
@@ -286,16 +289,17 @@ const LoginPage: React.FC = () => {
                 }}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: 2,
+                    borderRadius: 1.5,
+                    fontSize: '0.875rem',
                   },
                   '& .MuiOutlinedInput-input': {
-                    py: 1.5,
+                    py: 1.25,
                   },
                 }}
               />
             </Box>
 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3.5 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -305,19 +309,19 @@ const LoginPage: React.FC = () => {
                   />
                 }
                 label={
-                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
+                  <Typography color="text.secondary" sx={{ fontSize: '0.75rem' }}>
                     Remember me
                   </Typography>
                 }
+                sx={{ '& .MuiFormControlLabel-label': { ml: -0.5 } }}
               />
               <Link
                 href="#"
-                variant="body2"
                 sx={{
                   color: '#0ea5e9',
                   textDecoration: 'none',
                   fontWeight: 500,
-                  fontSize: '0.875rem',
+                  fontSize: '0.75rem',
                   '&:hover': { textDecoration: 'underline' },
                 }}
               >
@@ -329,13 +333,12 @@ const LoginPage: React.FC = () => {
               type="submit"
               fullWidth
               variant="contained"
-              size="large"
-              endIcon={<LoginIcon />}
+              endIcon={<LoginIcon sx={{ fontSize: 18 }} />}
               sx={{
-                py: 1.75,
-                borderRadius: 2,
+                py: 1.25,
+                borderRadius: 1.5,
                 background: '#0ea5e9',
-                fontSize: '1rem',
+                fontSize: '0.875rem',
                 fontWeight: 600,
                 textTransform: 'none',
                 boxShadow: '0 4px 14px 0 rgba(14, 165, 233, 0.4)',
@@ -350,9 +353,8 @@ const LoginPage: React.FC = () => {
           </form>
 
           <Typography
-            variant="caption"
             color="text.secondary"
-            sx={{ display: 'block', textAlign: 'center', mt: 5, fontSize: '0.8rem' }}
+            sx={{ display: 'block', textAlign: 'center', mt: 4, fontSize: '0.7rem' }}
           >
             © 2026 KALNET. All rights reserved.
           </Typography>
