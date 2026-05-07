@@ -1,4 +1,4 @@
-const STORAGE_PREFIX = 'hospitality_crm_';
+const STORAGE_PREFIX = 'hospitality_crm_v2_';
 
 export const storage = {
   get: <T>(key: string, defaultValue: T): T => {

@@ -193,7 +193,9 @@ const CateringPage: React.FC = () => {
             </Box>
 
             {foodPlan ? (
-              <Box sx={{ p: 2, bgcolor: 'success.light', borderRadius: 1, mb: 2, color: 'success.contrastText' }}>
+              <Box 
+                onClick={() => hasPermission('food', 'edit') && handleOpenDialog(event.id, foodPlan)}
+                sx={{ p: 2, bgcolor: 'success.light', borderRadius: 1, mb: 2, color: 'success.contrastText', cursor: hasPermission('food', 'edit') ? 'pointer' : 'default', '&:hover': hasPermission('food', 'edit') ? { opacity: 0.9 } : {} }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Box>
                     <Typography variant="subtitle2" fontWeight={600}>
@@ -209,12 +211,16 @@ const CateringPage: React.FC = () => {
                 </Box>
               </Box>
             ) : (
-              <Alert severity="warning" sx={{ mb: 2 }}>
-                No food plan configured for this event
+              <Alert 
+                severity="warning" 
+                sx={{ mb: 2, cursor: hasPermission('food', 'edit') ? 'pointer' : 'default' }}
+                onClick={() => hasPermission('food', 'edit') && handleOpenDialog(event.id, undefined)}
+              >
+                No food plan configured for this event - Click to add plan
               </Alert>
             )}
 
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+            <Box sx={{ display: 'none' }}>
               {hasPermission('food', 'edit') && (
                 <Button
                   variant={foodPlan ? 'outlined' : 'contained'}

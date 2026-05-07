@@ -142,7 +142,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const isOwner = user?.role === 'owner';
   const isBranchManager = user?.role === 'branch_manager';
   const isStaff = user?.role === 'staff';
-  const [selectedPropertyId, setSelectedPropertyId] = useState<string | undefined>('p1');
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string | undefined>(undefined);
   
   // Use selected override for owner, otherwise fallback to the user's hardcoded property
   const currentPropertyId = isOwner ? selectedPropertyId : user?.propertyId; 
@@ -155,7 +155,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Reset selected property on user change
   useEffect(() => {
-    setSelectedPropertyId('p1');
+    setSelectedPropertyId(undefined);
   }, [user]);
 
   return (

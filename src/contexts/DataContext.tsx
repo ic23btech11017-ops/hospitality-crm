@@ -16,7 +16,23 @@ import type {
   DashboardStats,
 } from '../types';
 import { storage, STORAGE_KEYS } from '../utils/storage';
-import { initialData } from '../data/mockData';
+import { rooms, bookings, guests, events, eventHalls, menuItems, menuPackages, eventFoodPlans, invoices, payments, integrations, externalBookings, syncLogs } from '../data/mockData';
+
+const initialData = {
+  rooms,
+  bookings,
+  guests,
+  events,
+  eventHalls,
+  menuItems,
+  menuPackages,
+  eventFoodPlans,
+  invoices,
+  payments,
+  integrations,
+  externalBookings,
+  syncLogs,
+};
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from './AuthContext';
 

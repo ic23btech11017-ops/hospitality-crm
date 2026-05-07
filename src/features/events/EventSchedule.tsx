@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -40,8 +41,15 @@ const statusIcons: Record<string, string> = {
   cancelled: '❌',
 };
 
-const EventSchedule: React.FC = () => {
+import type { Event } from '../../types';
+
+interface EventScheduleProps {
+  onEventClick?: (event: Event) => void;
+}
+
+const EventSchedule: React.FC<EventScheduleProps> = ({ onEventClick }) => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const { events, eventHalls } = useData();
   const [weekOffset, setWeekOffset] = useState(0);
 
@@ -321,6 +329,13 @@ const EventSchedule: React.FC = () => {
                             }
                           >
                             <Box
+                              onClick={() => {
+                                if (onEventClick) {
+                                  onEventClick(event);
+                                } else {
+                                  navigate(`/events/${event.id}`);
+                                }
+                              }}
                               sx={{
                                 bgcolor: colors.bg,
                                 border: `1.5px solid ${colors.border}`,

@@ -345,7 +345,7 @@ const EventsPage: React.FC = () => {
       </PageHeader>
 
       {viewMode === 'schedule' ? (
-        <EventSchedule />
+        <EventSchedule onEventClick={handleOpenDialog} />
       ) : (
         <>
           {/* Filters */}
