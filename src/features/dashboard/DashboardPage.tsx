@@ -22,12 +22,18 @@ import { useAuth } from '../../contexts/AuthContext';
 import { StatCard, DataCard } from '../../components/common/Cards';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { formatCurrency, formatDate, getRoomTypeLabel, getEventTypeLabel } from '../../utils/helpers';
+import { properties } from '../../data/propertiesData';
 
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isOwner, currentPropertyId } = useAuth();
   const { getDashboardStats, rooms, bookings, events, guests, eventHalls, externalBookings } = useData();
   const stats = getDashboardStats();
+  
+  const activeProperty = currentPropertyId ? properties.find(p => p.id === currentPropertyId) : properties[0];
+  const displayBranchName = isOwner 
+    ? (activeProperty?.name || properties[0].name) 
+    : user?.branchName;
 
   // Revenue chart data (mock data for demo)
   const revenueData = [
@@ -91,13 +97,18 @@ const DashboardPage: React.FC = () => {
       animate="visible"
     >
       {/* Welcome Section */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" fontWeight={700} gutterBottom>
-          Welcome back, {user?.name?.split(' ')[0]}! 👋
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          Here's what's happening at your hotel today
-        </Typography>
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box>
+          <Typography variant="h4" fontWeight={700} gutterBottom>
+            Welcome back, {user?.name?.split(' ')[0]}! 👋
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Here's what's happening today
+          </Typography>
+        </Box>
+        {displayBranchName && (
+          <Chip label={displayBranchName} sx={{ bgcolor: 'primary.main', color: 'white', fontWeight: 700 }} />
+        )}
       </Box>
 
       {/* Stats Cards */}

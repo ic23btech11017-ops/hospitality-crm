@@ -18,6 +18,7 @@ import type {
 import { storage, STORAGE_KEYS } from '../utils/storage';
 import { initialData } from '../data/mockData';
 import { v4 as uuidv4 } from 'uuid';
+import { useAuth } from './AuthContext';
 
 interface DataContextType {
   // Data
@@ -115,6 +116,7 @@ const initializeData = <T,>(key: string, defaultData: T[]): T[] => {
 };
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { currentPropertyId } = useAuth();
   const [rooms, setRooms] = useState<Room[]>(() => initializeData(STORAGE_KEYS.ROOMS, initialData.rooms));
   const [bookings, setBookings] = useState<Booking[]>(() => initializeData(STORAGE_KEYS.BOOKINGS, initialData.bookings));
   const [guests, setGuests] = useState<Guest[]>(() => initializeData(STORAGE_KEYS.GUESTS, initialData.guests));
@@ -145,32 +147,38 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const today = new Date().toISOString().split('T')[0];
 
+  // Filtered views based on currentPropertyId
+  const filteredRooms = currentPropertyId ? rooms.filter(r => r.propertyId === currentPropertyId) : rooms;
+  const filteredBookings = currentPropertyId ? bookings.filter(b => b.propertyId === currentPropertyId) : bookings;
+  const filteredEvents = currentPropertyId ? events.filter(e => e.id.startsWith(currentPropertyId)) : events;
+  const filteredInvoices = currentPropertyId ? invoices.filter(i => i.id.startsWith(currentPropertyId)) : invoices;
+
   // Dashboard stats
   const getDashboardStats = useCallback((): DashboardStats => {
-    const occupiedRooms = rooms.filter(r => r.status === 'occupied').length;
-    const availableRooms = rooms.filter(r => r.status === 'available').length;
-    const todayCheckIns = bookings.filter(b => b.checkIn === today && b.status === 'confirmed').length;
-    const todayCheckOuts = bookings.filter(b => b.checkOut === today && b.status === 'checked_in').length;
-    const upcomingEvents = events.filter(e => e.date >= today && e.status === 'confirmed').length;
-    const monthlyRevenue = invoices
+    const occupiedRooms = filteredRooms.filter(r => r.status === 'occupied').length;
+    const availableRooms = filteredRooms.filter(r => r.status === 'available').length;
+    const todayCheckIns = filteredBookings.filter(b => b.checkIn === today && b.status === 'confirmed').length;
+    const todayCheckOuts = filteredBookings.filter(b => b.checkOut === today && b.status === 'checked_in').length;
+    const upcomingEvents = filteredEvents.filter(e => e.date >= today && e.status === 'confirmed').length;
+    const monthlyRevenue = filteredInvoices
       .filter(i => i.createdAt.startsWith(today.substring(0, 7)))
       .reduce((sum, i) => sum + i.paidAmount, 0);
-    const pendingPayments = invoices
+    const pendingPayments = filteredInvoices
       .filter(i => i.status === 'partial' || i.status === 'sent')
       .reduce((sum, i) => sum + (i.totalAmount - i.paidAmount), 0);
 
     return {
-      totalRooms: rooms.length,
+      totalRooms: filteredRooms.length,
       occupiedRooms,
       availableRooms,
-      occupancyRate: Math.round((occupiedRooms / rooms.length) * 100),
+      occupancyRate: filteredRooms.length > 0 ? Math.round((occupiedRooms / filteredRooms.length) * 100) : 0,
       todayCheckIns,
       todayCheckOuts,
       upcomingEvents,
       monthlyRevenue,
       pendingPayments,
     };
-  }, [rooms, bookings, events, invoices, today]);
+  }, [filteredRooms, filteredBookings, filteredEvents, filteredInvoices, today]);
 
   // Room operations
   const addRoom = useCallback((room: Omit<Room, 'id'>): Room => {
@@ -365,19 +373,19 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   return (
     <DataContext.Provider
       value={{
-        rooms,
-        bookings,
-        guests,
-        events,
-        eventHalls,
-        menuItems,
-        menuPackages,
-        eventFoodPlans,
-        invoices,
-        payments,
-        integrations,
-        externalBookings,
-        syncLogs,
+        rooms: currentPropertyId ? rooms.filter(r => r.propertyId === currentPropertyId) : rooms,
+        bookings: currentPropertyId ? bookings.filter(b => b.propertyId === currentPropertyId) : bookings,
+        guests: currentPropertyId ? guests.filter(g => g.id.startsWith(currentPropertyId)) : guests,
+        events: currentPropertyId ? events.filter(e => e.id.startsWith(currentPropertyId)) : events,
+        eventHalls: currentPropertyId ? eventHalls.filter(h => h.id.startsWith(currentPropertyId)) : eventHalls,
+        menuItems: menuItems, // Global
+        menuPackages: menuPackages, // Global
+        eventFoodPlans: currentPropertyId ? eventFoodPlans.filter(fp => fp.id.startsWith(currentPropertyId)) : eventFoodPlans,
+        invoices: currentPropertyId ? invoices.filter(i => i.id.startsWith(currentPropertyId)) : invoices,
+        payments: currentPropertyId ? payments.filter(p => p.id.startsWith(currentPropertyId)) : payments,
+        integrations: integrations, // Global
+        externalBookings: currentPropertyId ? externalBookings.filter(eb => eb.roomId?.startsWith(currentPropertyId)) : externalBookings,
+        syncLogs: syncLogs, // Global
         getDashboardStats,
         addRoom,
         updateRoom,

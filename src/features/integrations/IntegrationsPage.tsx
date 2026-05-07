@@ -62,6 +62,8 @@ const platformIcons: Record<IntegrationPlatform, React.ReactNode> = {
   google_calendar: <CalendarIcon />,
   website: <WebsiteIcon />,
   oyo: <BookingIcon />,
+  agoda: <BookingIcon />,
+  makemytrip: <BookingIcon />,
 };
 
 const platformNames: Record<IntegrationPlatform, string> = {
@@ -71,6 +73,8 @@ const platformNames: Record<IntegrationPlatform, string> = {
   google_calendar: 'Google Calendar',
   website: 'Website',
   oyo: 'OYO',
+  agoda: 'Agoda',
+  makemytrip: 'MakeMyTrip',
 };
 
 const platformColors: Record<IntegrationPlatform, string> = {
@@ -80,6 +84,8 @@ const platformColors: Record<IntegrationPlatform, string> = {
   google_calendar: '#4285F4',
   website: '#10b981',
   oyo: '#EE2E24',
+  agoda: '#e00000',
+  makemytrip: '#e53935',
 };
 
 interface TabPanelProps {

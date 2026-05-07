@@ -13,6 +13,8 @@ import {
   Divider,
   Badge,
   Tooltip,
+  Select,
+  FormControl,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -23,10 +25,13 @@ import {
   Logout as LogoutIcon,
   Settings as SettingsIcon,
 } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { getInitials } from '../../utils/helpers';
+import { alerts, properties } from '../../data/propertiesData';
+import { Chip } from '@mui/material';
+import { Speed as SpeedIcon } from '@mui/icons-material';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -36,10 +41,15 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const location = useLocation();
+  const { user, logout, isOwner, isBranchManager, currentPropertyId, setCurrentPropertyId } = useAuth();
   const { mode, toggleTheme } = useTheme();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [notificationAnchor, setNotificationAnchor] = React.useState<null | HTMLElement>(null);
+  const unreadAlerts = alerts.filter(a => !a.isRead).length;
+
+  const enterpriseRoutes = ['/super-dashboard', '/properties', '/revenue', '/reputation', '/alerts', '/staff'];
+  const isEnterpriseRoute = enterpriseRoutes.some(route => location.pathname.startsWith(route));
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -74,10 +84,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
 
   const getRoleLabel = (role: string): string => {
     const labels: Record<string, string> = {
-      admin: 'Administrator',
-      front_desk: 'Front Desk',
-      event_manager: 'Event Manager',
-      manager: 'General Manager',
+      owner: 'Owner',
+      branch_manager: 'Branch Manager',
+      staff: 'Staff',
     };
     return labels[role] || role;
   };
@@ -109,7 +118,47 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           <MenuIcon />
         </IconButton>
 
+        {/* Breadcrumbs */}
+        {isOwner && (
+          <Chip
+            icon={<SpeedIcon sx={{ fontSize: '14px !important' }} />}
+            label="Meridian Hotels Group"
+            size="small"
+            onClick={() => navigate('/super-dashboard')}
+            sx={{ ml: 1, height: 26, fontSize: '0.72rem', fontWeight: 700, bgcolor: '#f59e0b15', color: '#f59e0b', border: '1px solid #f59e0b30', cursor: 'pointer', '&:hover': { bgcolor: '#f59e0b25' } }}
+          />
+        )}
+        {isBranchManager && user?.branchName && (
+          <Chip
+            label={user.branchName}
+            size="small"
+            sx={{ ml: 1, height: 26, fontSize: '0.72rem', fontWeight: 700, bgcolor: '#0ea5e915', color: '#0ea5e9', border: '1px solid #0ea5e930' }}
+          />
+        )}
+        
         <Box sx={{ flexGrow: 1 }} />
+
+        {isOwner && !isEnterpriseRoute && (
+          <FormControl size="small" sx={{ minWidth: 200, mr: 2, display: { xs: 'none', sm: 'block' } }}>
+            <Select
+              value={currentPropertyId || properties[0].id}
+              onChange={(e) => setCurrentPropertyId(e.target.value)}
+              displayEmpty
+              sx={{ 
+                height: 32, 
+                fontSize: '0.8rem',
+                borderRadius: 2,
+                '& .MuiOutlinedInput-notchedOutline': { borderColor: 'divider' }
+              }}
+            >
+              {properties.map((p) => (
+                <MenuItem key={p.id} value={p.id} sx={{ fontSize: '0.8rem' }}>
+                  {p.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
 
         {/* Theme Toggle */}
         <Tooltip title={mode === 'light' ? 'Dark mode' : 'Light mode'}>
@@ -118,10 +167,10 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           </IconButton>
         </Tooltip>
 
-        {/* Notifications */}
-        <Tooltip title="Notifications">
-          <IconButton onClick={handleNotificationOpen} sx={{ color: 'text.primary' }}>
-            <Badge badgeContent={notifications.length} color="error">
+        {/* Notifications / Alerts */}
+        <Tooltip title={isOwner ? 'Alerts Center' : 'Notifications'}>
+          <IconButton onClick={isOwner ? () => navigate('/alerts') : handleNotificationOpen} sx={{ color: 'text.primary' }}>
+            <Badge badgeContent={isOwner ? unreadAlerts : notifications.length} color="error">
               <NotificationsIcon />
             </Badge>
           </IconButton>

@@ -14,6 +14,7 @@ import type {
   ExternalBooking,
   SyncLog,
 } from '../types';
+import { properties } from './propertiesData';
 
 // Helper to generate dates
 const today = new Date();
@@ -24,59 +25,110 @@ const addDays = (date: Date, days: number) => {
   return result;
 };
 
-// Rooms
-export const rooms: Room[] = [
-  { id: 'r1', roomNumber: '101', type: 'single', capacity: 1, pricePerNight: 3500, status: 'available', floor: 1, amenities: ['WiFi', 'TV', 'AC'] },
-  { id: 'r2', roomNumber: '102', type: 'single', capacity: 1, pricePerNight: 3500, status: 'occupied', floor: 1, amenities: ['WiFi', 'TV', 'AC'] },
-  { id: 'r3', roomNumber: '103', type: 'double', capacity: 2, pricePerNight: 5500, status: 'available', floor: 1, amenities: ['WiFi', 'TV', 'AC', 'Mini Bar'] },
-  { id: 'r4', roomNumber: '104', type: 'double', capacity: 2, pricePerNight: 5500, status: 'cleaning', floor: 1, amenities: ['WiFi', 'TV', 'AC', 'Mini Bar'] },
-  { id: 'r5', roomNumber: '201', type: 'double', capacity: 2, pricePerNight: 5500, status: 'available', floor: 2, amenities: ['WiFi', 'TV', 'AC', 'Mini Bar'] },
-  { id: 'r6', roomNumber: '202', type: 'suite', capacity: 4, pricePerNight: 9500, status: 'occupied', floor: 2, amenities: ['WiFi', 'TV', 'AC', 'Mini Bar', 'Jacuzzi'] },
-  { id: 'r7', roomNumber: '203', type: 'suite', capacity: 4, pricePerNight: 9500, status: 'available', floor: 2, amenities: ['WiFi', 'TV', 'AC', 'Mini Bar', 'Jacuzzi'] },
-  { id: 'r8', roomNumber: '204', type: 'deluxe', capacity: 3, pricePerNight: 7500, status: 'maintenance', floor: 2, amenities: ['WiFi', 'TV', 'AC', 'Mini Bar', 'Balcony'] },
-  { id: 'r9', roomNumber: '301', type: 'deluxe', capacity: 3, pricePerNight: 7500, status: 'available', floor: 3, amenities: ['WiFi', 'TV', 'AC', 'Mini Bar', 'Balcony'] },
-  { id: 'r10', roomNumber: '302', type: 'presidential', capacity: 6, pricePerNight: 25000, status: 'available', floor: 3, amenities: ['WiFi', 'TV', 'AC', 'Mini Bar', 'Jacuzzi', 'Balcony', 'Kitchen', 'Living Room'] },
+// Base Rooms
+const baseRooms: Omit<Room, 'id' | 'propertyId'>[] = [
+  { roomNumber: '101', type: 'single', capacity: 1, pricePerNight: 3500, status: 'available', floor: 1, amenities: ['WiFi', 'TV', 'AC'] },
+  { roomNumber: '102', type: 'single', capacity: 1, pricePerNight: 3500, status: 'occupied', floor: 1, amenities: ['WiFi', 'TV', 'AC'] },
+  { roomNumber: '103', type: 'double', capacity: 2, pricePerNight: 5500, status: 'available', floor: 1, amenities: ['WiFi', 'TV', 'AC', 'Mini Bar'] },
+  { roomNumber: '104', type: 'double', capacity: 2, pricePerNight: 5500, status: 'cleaning', floor: 1, amenities: ['WiFi', 'TV', 'AC', 'Mini Bar'] },
+  { roomNumber: '201', type: 'double', capacity: 2, pricePerNight: 5500, status: 'available', floor: 2, amenities: ['WiFi', 'TV', 'AC', 'Mini Bar'] },
+  { roomNumber: '202', type: 'suite', capacity: 4, pricePerNight: 9500, status: 'occupied', floor: 2, amenities: ['WiFi', 'TV', 'AC', 'Mini Bar', 'Jacuzzi'] },
+  { roomNumber: '203', type: 'suite', capacity: 4, pricePerNight: 9500, status: 'available', floor: 2, amenities: ['WiFi', 'TV', 'AC', 'Mini Bar', 'Jacuzzi'] },
+  { roomNumber: '204', type: 'deluxe', capacity: 3, pricePerNight: 7500, status: 'maintenance', floor: 2, amenities: ['WiFi', 'TV', 'AC', 'Mini Bar', 'Balcony'] },
+  { roomNumber: '301', type: 'deluxe', capacity: 3, pricePerNight: 7500, status: 'available', floor: 3, amenities: ['WiFi', 'TV', 'AC', 'Mini Bar', 'Balcony'] },
+  { roomNumber: '302', type: 'presidential', capacity: 6, pricePerNight: 25000, status: 'available', floor: 3, amenities: ['WiFi', 'TV', 'AC', 'Mini Bar', 'Jacuzzi', 'Balcony', 'Kitchen', 'Living Room'] },
 ];
 
-// Guests
-export const guests: Guest[] = [
-  { id: 'g1', name: 'Rahul Sharma', email: 'rahul.sharma@email.com', phone: '+91 98765 43210', preferences: { roomType: 'double', foodType: 'veg' }, createdAt: formatDate(addDays(today, -30)), updatedAt: formatDate(today) },
-  { id: 'g2', name: 'Priya Patel', email: 'priya.patel@email.com', phone: '+91 87654 32109', preferences: { roomType: 'suite', foodType: 'non_veg' }, createdAt: formatDate(addDays(today, -25)), updatedAt: formatDate(today) },
-  { id: 'g3', name: 'Amit Kumar', email: 'amit.kumar@email.com', phone: '+91 76543 21098', preferences: { roomType: 'single' }, createdAt: formatDate(addDays(today, -20)), updatedAt: formatDate(today) },
-  { id: 'g4', name: 'Sneha Reddy', email: 'sneha.reddy@email.com', phone: '+91 65432 10987', preferences: { foodType: 'vegan', allergies: ['nuts', 'dairy'] }, createdAt: formatDate(addDays(today, -15)), updatedAt: formatDate(today) },
-  { id: 'g5', name: 'Vikram Singh', email: 'vikram.singh@email.com', phone: '+91 54321 09876', preferences: { roomType: 'deluxe', specialRequests: 'Early check-in preferred' }, createdAt: formatDate(addDays(today, -10)), updatedAt: formatDate(today) },
-  { id: 'g6', name: 'Ananya Iyer', email: 'ananya.iyer@email.com', phone: '+91 43210 98765', preferences: { roomType: 'double', foodType: 'veg' }, createdAt: formatDate(addDays(today, -5)), updatedAt: formatDate(today) },
+export const rooms: Room[] = properties.flatMap(p => 
+  baseRooms.map((room, index) => ({
+    ...room,
+    id: `${p.id}-r${index + 1}`,
+    propertyId: p.id
+  }))
+);
+
+
+// Base Guests
+const baseGuests: Omit<Guest, 'id'>[] = [
+  { name: 'Rahul Sharma', email: 'rahul.sharma@email.com', phone: '+91 98765 43210', preferences: { roomType: 'double', foodType: 'veg' }, createdAt: formatDate(addDays(today, -30)), updatedAt: formatDate(today) },
+  { name: 'Priya Patel', email: 'priya.patel@email.com', phone: '+91 87654 32109', preferences: { roomType: 'suite', foodType: 'non_veg' }, createdAt: formatDate(addDays(today, -25)), updatedAt: formatDate(today) },
+  { name: 'Amit Kumar', email: 'amit.kumar@email.com', phone: '+91 76543 21098', preferences: { roomType: 'single' }, createdAt: formatDate(addDays(today, -20)), updatedAt: formatDate(today) },
+  { name: 'Sneha Reddy', email: 'sneha.reddy@email.com', phone: '+91 65432 10987', preferences: { foodType: 'vegan', allergies: ['nuts', 'dairy'] }, createdAt: formatDate(addDays(today, -15)), updatedAt: formatDate(today) },
+  { name: 'Vikram Singh', email: 'vikram.singh@email.com', phone: '+91 54321 09876', preferences: { roomType: 'deluxe', specialRequests: 'Early check-in preferred' }, createdAt: formatDate(addDays(today, -10)), updatedAt: formatDate(today) },
+  { name: 'Ananya Iyer', email: 'ananya.iyer@email.com', phone: '+91 43210 98765', preferences: { roomType: 'double', foodType: 'veg' }, createdAt: formatDate(addDays(today, -5)), updatedAt: formatDate(today) },
 ];
 
-// Bookings
-export const bookings: Booking[] = [
-  { id: 'b1', guestId: 'g1', roomId: 'r2', checkIn: formatDate(today), checkOut: formatDate(addDays(today, 3)), status: 'checked_in', totalAmount: 16500, paidAmount: 16500, source: 'direct', createdAt: formatDate(addDays(today, -5)), updatedAt: formatDate(today) },
-  { id: 'b2', guestId: 'g2', roomId: 'r6', checkIn: formatDate(addDays(today, -1)), checkOut: formatDate(addDays(today, 2)), status: 'checked_in', totalAmount: 28500, paidAmount: 15000, source: 'booking_com', createdAt: formatDate(addDays(today, -10)), updatedAt: formatDate(today) },
-  { id: 'b3', guestId: 'g3', roomId: 'r1', checkIn: formatDate(addDays(today, 1)), checkOut: formatDate(addDays(today, 4)), status: 'confirmed', totalAmount: 10500, paidAmount: 5000, source: 'website', createdAt: formatDate(addDays(today, -3)), updatedAt: formatDate(today) },
-  { id: 'b4', guestId: 'g4', roomId: 'r5', checkIn: formatDate(addDays(today, 2)), checkOut: formatDate(addDays(today, 5)), status: 'confirmed', totalAmount: 16500, paidAmount: 0, source: 'airbnb', createdAt: formatDate(addDays(today, -2)), updatedAt: formatDate(today) },
-  { id: 'b5', guestId: 'g5', roomId: 'r9', checkIn: formatDate(addDays(today, 5)), checkOut: formatDate(addDays(today, 8)), status: 'confirmed', totalAmount: 22500, paidAmount: 22500, source: 'oyo', createdAt: formatDate(addDays(today, -1)), updatedAt: formatDate(today) },
-  { id: 'b6', guestId: 'g6', roomId: 'r3', checkIn: formatDate(addDays(today, -5)), checkOut: formatDate(addDays(today, -2)), status: 'checked_out', totalAmount: 16500, paidAmount: 16500, source: 'expedia', createdAt: formatDate(addDays(today, -15)), updatedAt: formatDate(addDays(today, -2)) },
-  { id: 'b7', guestId: 'g1', roomId: 'r7', checkIn: formatDate(addDays(today, 10)), checkOut: formatDate(addDays(today, 12)), status: 'confirmed', totalAmount: 19000, paidAmount: 10000, source: 'website', createdAt: formatDate(addDays(today, -1)), updatedAt: formatDate(today) },
-  { id: 'b8', guestId: 'g3', roomId: 'r10', checkIn: formatDate(addDays(today, 15)), checkOut: formatDate(addDays(today, 18)), status: 'confirmed', totalAmount: 75000, paidAmount: 25000, source: 'direct', createdAt: formatDate(today), updatedAt: formatDate(today) },
+export const guests: Guest[] = properties.flatMap(p => 
+  baseGuests.map((guest, index) => ({
+    ...guest,
+    id: `${p.id}-g${index + 1}`
+  }))
+);
+
+// Base Bookings
+const baseBookings: Omit<Booking, 'id' | 'propertyId' | 'guestId' | 'roomId'>[] = [
+  { checkIn: formatDate(today), checkOut: formatDate(addDays(today, 3)), status: 'checked_in', totalAmount: 16500, paidAmount: 16500, source: 'direct', createdAt: formatDate(addDays(today, -5)), updatedAt: formatDate(today) },
+  { checkIn: formatDate(addDays(today, -1)), checkOut: formatDate(addDays(today, 2)), status: 'checked_in', totalAmount: 28500, paidAmount: 15000, source: 'booking_com', createdAt: formatDate(addDays(today, -10)), updatedAt: formatDate(today) },
+  { checkIn: formatDate(addDays(today, 1)), checkOut: formatDate(addDays(today, 4)), status: 'confirmed', totalAmount: 10500, paidAmount: 5000, source: 'website', createdAt: formatDate(addDays(today, -3)), updatedAt: formatDate(today) },
+  { checkIn: formatDate(addDays(today, 2)), checkOut: formatDate(addDays(today, 5)), status: 'confirmed', totalAmount: 16500, paidAmount: 0, source: 'airbnb', createdAt: formatDate(addDays(today, -2)), updatedAt: formatDate(today) },
+  { checkIn: formatDate(addDays(today, 5)), checkOut: formatDate(addDays(today, 8)), status: 'confirmed', totalAmount: 22500, paidAmount: 22500, source: 'oyo', createdAt: formatDate(addDays(today, -1)), updatedAt: formatDate(today) },
+  { checkIn: formatDate(addDays(today, -5)), checkOut: formatDate(addDays(today, -2)), status: 'checked_out', totalAmount: 16500, paidAmount: 16500, source: 'expedia', createdAt: formatDate(addDays(today, -15)), updatedAt: formatDate(addDays(today, -2)) },
+  { checkIn: formatDate(addDays(today, 10)), checkOut: formatDate(addDays(today, 12)), status: 'confirmed', totalAmount: 19000, paidAmount: 10000, source: 'website', createdAt: formatDate(addDays(today, -1)), updatedAt: formatDate(today) },
+  { checkIn: formatDate(addDays(today, 15)), checkOut: formatDate(addDays(today, 18)), status: 'confirmed', totalAmount: 75000, paidAmount: 25000, source: 'direct', createdAt: formatDate(today), updatedAt: formatDate(today) },
 ];
 
-// Event Halls
-export const eventHalls: EventHall[] = [
-  { id: 'h1', name: 'Grand Ballroom', capacity: 500, pricePerDay: 150000, amenities: ['Stage', 'Sound System', 'Projector', 'AC', 'Dance Floor'], description: 'Our largest venue perfect for grand celebrations' },
-  { id: 'h2', name: 'Crystal Hall', capacity: 200, pricePerDay: 75000, amenities: ['Stage', 'Sound System', 'Projector', 'AC'], description: 'Elegant hall with crystal chandeliers' },
-  { id: 'h3', name: 'Garden Pavilion', capacity: 150, pricePerDay: 50000, amenities: ['Open Air', 'Garden View', 'Tent Coverage'], description: 'Beautiful outdoor venue surrounded by gardens' },
-  { id: 'h4', name: 'Conference Room A', capacity: 50, pricePerDay: 25000, amenities: ['Projector', 'Video Conferencing', 'AC', 'Whiteboard'], description: 'Professional setting for business meetings' },
-  { id: 'h5', name: 'Conference Room B', capacity: 30, pricePerDay: 15000, amenities: ['Projector', 'AC', 'Whiteboard'], description: 'Compact meeting room for small groups' },
+export const bookings: Booking[] = properties.flatMap(p => 
+  baseBookings.map((booking, index) => {
+    // Distribute across guests 1-6 and rooms 1-10
+    const guestIdx = (index % 6) + 1;
+    const roomIdx = (index % 10) + 1;
+    return {
+      ...booking,
+      id: `${p.id}-b${index + 1}`,
+      propertyId: p.id,
+      guestId: `${p.id}-g${guestIdx}`,
+      roomId: `${p.id}-r${roomIdx}`
+    };
+  })
+);
+
+// Base Event Halls
+const baseEventHalls: Omit<EventHall, 'id'>[] = [
+  { name: 'Grand Ballroom', capacity: 500, pricePerDay: 150000, amenities: ['Stage', 'Sound System', 'Projector', 'AC', 'Dance Floor'], description: 'Our largest venue perfect for grand celebrations' },
+  { name: 'Crystal Hall', capacity: 200, pricePerDay: 75000, amenities: ['Stage', 'Sound System', 'Projector', 'AC'], description: 'Elegant hall with crystal chandeliers' },
+  { name: 'Garden Pavilion', capacity: 150, pricePerDay: 50000, amenities: ['Open Air', 'Garden View', 'Tent Coverage'], description: 'Beautiful outdoor venue surrounded by gardens' },
+  { name: 'Conference Room A', capacity: 50, pricePerDay: 25000, amenities: ['Projector', 'Video Conferencing', 'AC', 'Whiteboard'], description: 'Professional setting for business meetings' },
+  { name: 'Conference Room B', capacity: 30, pricePerDay: 15000, amenities: ['Projector', 'AC', 'Whiteboard'], description: 'Compact meeting room for small groups' },
 ];
 
-// Events
-export const events: Event[] = [
-  { id: 'e1', name: 'Sharma-Verma Wedding', type: 'wedding', hallId: 'h1', date: formatDate(addDays(today, 7)), startTime: '10:00', endTime: '23:00', guestCount: 350, status: 'confirmed', contactName: 'Rajesh Sharma', contactPhone: '+91 98765 11111', contactEmail: 'rajesh@email.com', allocatedRoomIds: ['r3', 'r5', 'r7', 'r9', 'r10'], foodPlanId: 'fp1', totalAmount: 850000, paidAmount: 500000, createdAt: formatDate(addDays(today, -30)), updatedAt: formatDate(today) },
-  { id: 'e2', name: 'Tech Conference 2024', type: 'conference', hallId: 'h2', date: formatDate(addDays(today, 14)), startTime: '09:00', endTime: '18:00', guestCount: 150, status: 'confirmed', contactName: 'Arun Tech', contactPhone: '+91 87654 22222', contactEmail: 'arun@techconf.com', allocatedRoomIds: ['r1', 'r2'], foodPlanId: 'fp2', totalAmount: 200000, paidAmount: 200000, createdAt: formatDate(addDays(today, -20)), updatedAt: formatDate(today) },
-  { id: 'e3', name: 'Birthday Celebration - 50th', type: 'party', hallId: 'h3', date: formatDate(addDays(today, 3)), startTime: '18:00', endTime: '23:00', guestCount: 80, status: 'confirmed', contactName: 'Meera Gupta', contactPhone: '+91 76543 33333', contactEmail: 'meera@email.com', allocatedRoomIds: [], totalAmount: 120000, paidAmount: 60000, createdAt: formatDate(addDays(today, -15)), updatedAt: formatDate(today) },
-  { id: 'e4', name: 'Board Meeting Q1', type: 'meeting', hallId: 'h4', date: formatDate(addDays(today, 1)), startTime: '10:00', endTime: '16:00', guestCount: 25, status: 'confirmed', contactName: 'Corporate Sec', contactPhone: '+91 65432 44444', contactEmail: 'corp@business.com', allocatedRoomIds: [], totalAmount: 35000, paidAmount: 35000, createdAt: formatDate(addDays(today, -7)), updatedAt: formatDate(today) },
-  { id: 'e5', name: 'Product Launch Event', type: 'seminar', hallId: 'h2', date: formatDate(addDays(today, 21)), startTime: '14:00', endTime: '20:00', guestCount: 180, status: 'inquiry', contactName: 'Marketing Lead', contactPhone: '+91 54321 55555', contactEmail: 'marketing@startup.com', allocatedRoomIds: [], totalAmount: 0, paidAmount: 0, createdAt: formatDate(addDays(today, -2)), updatedAt: formatDate(today) },
+export const eventHalls: EventHall[] = properties.flatMap(p => 
+  baseEventHalls.map((hall, index) => ({
+    ...hall,
+    id: `${p.id}-h${index + 1}`
+  }))
+);
+
+// Base Events
+const baseEvents: Omit<Event, 'id' | 'hallId' | 'allocatedRoomIds' | 'foodPlanId'>[] = [
+  { name: 'Sharma-Verma Wedding', type: 'wedding', date: formatDate(addDays(today, 7)), startTime: '10:00', endTime: '23:00', guestCount: 350, status: 'confirmed', contactName: 'Rajesh Sharma', contactPhone: '+91 98765 11111', contactEmail: 'rajesh@email.com', totalAmount: 850000, paidAmount: 500000, createdAt: formatDate(addDays(today, -30)), updatedAt: formatDate(today) },
+  { name: 'Tech Conference 2024', type: 'conference', date: formatDate(addDays(today, 14)), startTime: '09:00', endTime: '18:00', guestCount: 150, status: 'confirmed', contactName: 'Arun Tech', contactPhone: '+91 87654 22222', contactEmail: 'arun@techconf.com', totalAmount: 200000, paidAmount: 200000, createdAt: formatDate(addDays(today, -20)), updatedAt: formatDate(today) },
+  { name: 'Birthday Celebration - 50th', type: 'party', date: formatDate(addDays(today, 3)), startTime: '18:00', endTime: '23:00', guestCount: 80, status: 'confirmed', contactName: 'Meera Gupta', contactPhone: '+91 76543 33333', contactEmail: 'meera@email.com', totalAmount: 120000, paidAmount: 60000, createdAt: formatDate(addDays(today, -15)), updatedAt: formatDate(today) },
+  { name: 'Board Meeting Q1', type: 'meeting', date: formatDate(addDays(today, 1)), startTime: '10:00', endTime: '16:00', guestCount: 25, status: 'confirmed', contactName: 'Corporate Sec', contactPhone: '+91 65432 44444', contactEmail: 'corp@business.com', totalAmount: 35000, paidAmount: 35000, createdAt: formatDate(addDays(today, -7)), updatedAt: formatDate(today) },
+  { name: 'Product Launch Event', type: 'seminar', date: formatDate(addDays(today, 21)), startTime: '14:00', endTime: '20:00', guestCount: 180, status: 'inquiry', contactName: 'Marketing Lead', contactPhone: '+91 54321 55555', contactEmail: 'marketing@startup.com', totalAmount: 0, paidAmount: 0, createdAt: formatDate(addDays(today, -2)), updatedAt: formatDate(today) },
 ];
+
+export const events: Event[] = properties.flatMap(p => 
+  baseEvents.map((e, index) => {
+    const hallIdx = (index % 5) + 1;
+    return {
+      ...e,
+      id: `${p.id}-e${index + 1}`,
+      hallId: `${p.id}-h${hallIdx}`,
+      allocatedRoomIds: index === 0 ? [`${p.id}-r3`, `${p.id}-r5`, `${p.id}-r7`] : [],
+      foodPlanId: index < 2 ? `${p.id}-fp${index + 1}` : undefined
+    };
+  })
+);
 
 // Menu Items
 export const menuItems: MenuItem[] = [
@@ -112,26 +164,53 @@ export const menuPackages: MenuPackage[] = [
   { id: 'mp4', name: 'Corporate Package', description: 'Professional catering for business events', menuItemIds: ['m1', 'm4', 'm8', 'm10', 'm12', 'm14'], pricePerPerson: 1000, minGuests: 20, maxGuests: 200 },
 ];
 
-// Event Food Plans
-export const eventFoodPlans: EventFoodPlan[] = [
-  { id: 'fp1', eventId: 'e1', menuPackageId: 'mp3', customMenuItemIds: [], guestCount: 350, mealTimes: ['lunch', 'dinner'], totalAmount: 875000 },
-  { id: 'fp2', eventId: 'e2', menuPackageId: 'mp4', customMenuItemIds: [], guestCount: 150, mealTimes: ['lunch'], totalAmount: 150000 },
+// Base Event Food Plans
+const baseEventFoodPlans: Omit<EventFoodPlan, 'id' | 'eventId'>[] = [
+  { menuPackageId: 'mp3', customMenuItemIds: [], guestCount: 350, mealTimes: ['lunch', 'dinner'], totalAmount: 875000 },
+  { menuPackageId: 'mp4', customMenuItemIds: [], guestCount: 150, mealTimes: ['lunch'], totalAmount: 150000 },
 ];
 
-// Invoices
-export const invoices: Invoice[] = [
-  { id: 'inv1', invoiceNumber: 'INV-2024-001', guestId: 'g1', bookingId: 'b1', items: [{ id: 'i1', description: 'Room Charges (3 nights)', quantity: 3, unitPrice: 5500, totalPrice: 16500 }], subtotal: 16500, tax: 2970, discount: 0, totalAmount: 19470, paidAmount: 19470, status: 'paid', dueDate: formatDate(today), createdAt: formatDate(addDays(today, -5)), updatedAt: formatDate(today) },
-  { id: 'inv2', invoiceNumber: 'INV-2024-002', guestId: 'g2', bookingId: 'b2', items: [{ id: 'i2', description: 'Suite Room (3 nights)', quantity: 3, unitPrice: 9500, totalPrice: 28500 }], subtotal: 28500, tax: 5130, discount: 1500, totalAmount: 32130, paidAmount: 15000, status: 'partial', dueDate: formatDate(addDays(today, 2)), createdAt: formatDate(addDays(today, -10)), updatedAt: formatDate(today) },
-  { id: 'inv3', invoiceNumber: 'INV-2024-003', guestId: 'g1', eventId: 'e1', items: [{ id: 'i3', description: 'Grand Ballroom Rental', quantity: 1, unitPrice: 150000, totalPrice: 150000 }, { id: 'i4', description: 'Catering (350 guests)', quantity: 350, unitPrice: 2500, totalPrice: 875000 }], subtotal: 1025000, tax: 184500, discount: 50000, totalAmount: 1159500, paidAmount: 500000, status: 'partial', dueDate: formatDate(addDays(today, 7)), createdAt: formatDate(addDays(today, -30)), updatedAt: formatDate(today) },
+export const eventFoodPlans: EventFoodPlan[] = properties.flatMap(p => 
+  baseEventFoodPlans.map((fp, index) => ({
+    ...fp,
+    id: `${p.id}-fp${index + 1}`,
+    eventId: `${p.id}-e${index + 1}`
+  }))
+);
+
+// Base Invoices
+const baseInvoices: Omit<Invoice, 'id' | 'guestId' | 'bookingId' | 'eventId'>[] = [
+  { invoiceNumber: 'INV-2024-001', items: [{ id: 'i1', description: 'Room Charges (3 nights)', quantity: 3, unitPrice: 5500, totalPrice: 16500 }], subtotal: 16500, tax: 2970, discount: 0, totalAmount: 19470, paidAmount: 19470, status: 'paid', dueDate: formatDate(today), createdAt: formatDate(addDays(today, -5)), updatedAt: formatDate(today) },
+  { invoiceNumber: 'INV-2024-002', items: [{ id: 'i2', description: 'Suite Room (3 nights)', quantity: 3, unitPrice: 9500, totalPrice: 28500 }], subtotal: 28500, tax: 5130, discount: 1500, totalAmount: 32130, paidAmount: 15000, status: 'partial', dueDate: formatDate(addDays(today, 2)), createdAt: formatDate(addDays(today, -10)), updatedAt: formatDate(today) },
+  { invoiceNumber: 'INV-2024-003', items: [{ id: 'i3', description: 'Grand Ballroom Rental', quantity: 1, unitPrice: 150000, totalPrice: 150000 }, { id: 'i4', description: 'Catering (350 guests)', quantity: 350, unitPrice: 2500, totalPrice: 875000 }], subtotal: 1025000, tax: 184500, discount: 50000, totalAmount: 1159500, paidAmount: 500000, status: 'partial', dueDate: formatDate(addDays(today, 7)), createdAt: formatDate(addDays(today, -30)), updatedAt: formatDate(today) },
 ];
 
-// Payments
-export const payments: Payment[] = [
-  { id: 'p1', invoiceId: 'inv1', amount: 19470, method: 'card', reference: 'TXN123456', createdAt: formatDate(addDays(today, -3)) },
-  { id: 'p2', invoiceId: 'inv2', amount: 15000, method: 'bank_transfer', reference: 'NEFT987654', createdAt: formatDate(addDays(today, -8)) },
-  { id: 'p3', invoiceId: 'inv3', amount: 300000, method: 'bank_transfer', reference: 'NEFT111222', createdAt: formatDate(addDays(today, -28)) },
-  { id: 'p4', invoiceId: 'inv3', amount: 200000, method: 'cash', createdAt: formatDate(addDays(today, -14)) },
+export const invoices: Invoice[] = properties.flatMap(p => 
+  baseInvoices.map((inv, index) => ({
+    ...inv,
+    id: `${p.id}-inv${index + 1}`,
+    invoiceNumber: `${p.code}-${inv.invoiceNumber}`,
+    guestId: `${p.id}-g${(index % 2) + 1}`,
+    bookingId: index < 2 ? `${p.id}-b${index + 1}` : undefined,
+    eventId: index === 2 ? `${p.id}-e1` : undefined
+  }))
+);
+
+// Base Payments
+const basePayments: Omit<Payment, 'id' | 'invoiceId'>[] = [
+  { amount: 19470, method: 'card', reference: 'TXN123456', createdAt: formatDate(addDays(today, -3)) },
+  { amount: 15000, method: 'bank_transfer', reference: 'NEFT987654', createdAt: formatDate(addDays(today, -8)) },
+  { amount: 300000, method: 'bank_transfer', reference: 'NEFT111222', createdAt: formatDate(addDays(today, -28)) },
+  { amount: 200000, method: 'cash', createdAt: formatDate(addDays(today, -14)) },
 ];
+
+export const payments: Payment[] = properties.flatMap(p => 
+  basePayments.map((pay, index) => ({
+    ...pay,
+    id: `${p.id}-p${index + 1}`,
+    invoiceId: index < 2 ? `${p.id}-inv${index + 1}` : `${p.id}-inv3`
+  }))
+);
 
 // Integrations
 export const integrations: Integration[] = [
@@ -142,15 +221,23 @@ export const integrations: Integration[] = [
   { id: 'int5', platform: 'website', status: 'active', lastSyncAt: new Date().toISOString(), settings: { webhookUrl: 'https://hotel.com/api/bookings' } },
 ];
 
-// External Bookings
-export const externalBookings: ExternalBooking[] = [
-  { id: 'eb1', externalId: 'BK-12345', source: 'booking_com', guestName: 'John Smith', guestEmail: 'john@gmail.com', roomId: 'r3', checkIn: formatDate(addDays(today, 10)), checkOut: formatDate(addDays(today, 13)), syncStatus: 'synced', rawData: {}, createdAt: formatDate(addDays(today, -1)), syncedAt: formatDate(today) },
-  { id: 'eb2', externalId: 'AIR-67890', source: 'airbnb', guestName: 'Sarah Johnson', guestEmail: 'sarah@email.com', roomId: 'r5', checkIn: formatDate(addDays(today, 15)), checkOut: formatDate(addDays(today, 18)), syncStatus: 'synced', rawData: {}, createdAt: formatDate(addDays(today, -2)), syncedAt: formatDate(addDays(today, -1)) },
-  { id: 'eb3', externalId: 'WEB-11111', source: 'website', guestName: 'Pending Guest', guestEmail: 'pending@email.com', checkIn: formatDate(addDays(today, 20)), checkOut: formatDate(addDays(today, 22)), syncStatus: 'pending', rawData: {}, createdAt: formatDate(today) },
-  { id: 'eb4', externalId: 'OYO-22222', source: 'oyo', guestName: 'Ravi Kumar', guestEmail: 'ravi@gmail.com', roomId: 'r1', checkIn: formatDate(addDays(today, 8)), checkOut: formatDate(addDays(today, 10)), syncStatus: 'synced', rawData: {}, createdAt: formatDate(addDays(today, -1)), syncedAt: formatDate(today) },
-  { id: 'eb5', externalId: 'EXP-33333', source: 'expedia', guestName: 'Maria Garcia', guestEmail: 'maria@email.com', roomId: 'r7', checkIn: formatDate(addDays(today, 12)), checkOut: formatDate(addDays(today, 14)), syncStatus: 'synced', rawData: {}, createdAt: formatDate(addDays(today, -3)), syncedAt: formatDate(addDays(today, -2)) },
-  { id: 'eb6', externalId: 'WEB-44444', source: 'website', guestName: 'Deepak Joshi', guestEmail: 'deepak@email.com', roomId: 'r9', checkIn: formatDate(addDays(today, 25)), checkOut: formatDate(addDays(today, 28)), syncStatus: 'synced', rawData: {}, createdAt: formatDate(addDays(today, -4)), syncedAt: formatDate(addDays(today, -3)) },
+// Base External Bookings
+const baseExternalBookings: Omit<ExternalBooking, 'id' | 'roomId'>[] = [
+  { externalId: 'BK-12345', source: 'booking_com', guestName: 'John Smith', guestEmail: 'john@gmail.com', checkIn: formatDate(addDays(today, 10)), checkOut: formatDate(addDays(today, 13)), syncStatus: 'synced', rawData: {}, createdAt: formatDate(addDays(today, -1)), syncedAt: formatDate(today) },
+  { externalId: 'AIR-67890', source: 'airbnb', guestName: 'Sarah Johnson', guestEmail: 'sarah@email.com', checkIn: formatDate(addDays(today, 15)), checkOut: formatDate(addDays(today, 18)), syncStatus: 'synced', rawData: {}, createdAt: formatDate(addDays(today, -2)), syncedAt: formatDate(addDays(today, -1)) },
+  { externalId: 'WEB-11111', source: 'website', guestName: 'Pending Guest', guestEmail: 'pending@email.com', checkIn: formatDate(addDays(today, 20)), checkOut: formatDate(addDays(today, 22)), syncStatus: 'pending', rawData: {}, createdAt: formatDate(today) },
+  { externalId: 'OYO-22222', source: 'oyo', guestName: 'Ravi Kumar', guestEmail: 'ravi@gmail.com', checkIn: formatDate(addDays(today, 8)), checkOut: formatDate(addDays(today, 10)), syncStatus: 'synced', rawData: {}, createdAt: formatDate(addDays(today, -1)), syncedAt: formatDate(today) },
+  { externalId: 'EXP-33333', source: 'expedia', guestName: 'Maria Garcia', guestEmail: 'maria@email.com', checkIn: formatDate(addDays(today, 12)), checkOut: formatDate(addDays(today, 14)), syncStatus: 'synced', rawData: {}, createdAt: formatDate(addDays(today, -3)), syncedAt: formatDate(addDays(today, -2)) },
+  { externalId: 'WEB-44444', source: 'website', guestName: 'Deepak Joshi', guestEmail: 'deepak@email.com', checkIn: formatDate(addDays(today, 25)), checkOut: formatDate(addDays(today, 28)), syncStatus: 'synced', rawData: {}, createdAt: formatDate(addDays(today, -4)), syncedAt: formatDate(addDays(today, -3)) },
 ];
+
+export const externalBookings: ExternalBooking[] = properties.flatMap(p => 
+  baseExternalBookings.map((eb, index) => ({
+    ...eb,
+    id: `${p.id}-eb${index + 1}`,
+    roomId: `${p.id}-r${(index % 9) + 1}`,
+  }))
+);
 
 // Sync Logs
 export const syncLogs: SyncLog[] = [

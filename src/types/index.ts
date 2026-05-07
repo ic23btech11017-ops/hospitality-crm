@@ -1,5 +1,8 @@
 // User & Auth Types
-export type UserRole = 'admin' | 'front_desk' | 'event_manager' | 'manager';
+export type UserRole = 'owner' | 'branch_manager' | 'staff';
+
+// Optional sub-role for staff to differentiate operational access
+export type StaffRole = 'front_desk' | 'event_manager' | 'restaurant' | 'housekeeping' | 'security';
 
 export interface User {
   id: string;
@@ -7,6 +10,39 @@ export interface User {
   email: string;
   role: UserRole;
   avatar?: string;
+  propertyId?: string;    // undefined for owner; required for branch_manager and staff
+  staffRole?: StaffRole;  // only for staff role — determines which CRM modules they access
+  branchName?: string;    // display name of the branch they belong to
+}
+
+// Property Types
+export type PropertyStatus = 'active' | 'maintenance' | 'closed' | 'archived';
+export type PropertyType = 'luxury' | 'business' | 'boutique' | 'resort' | 'budget';
+
+export interface Property {
+  id: string;
+  name: string;
+  code: string; // e.g. "MUM-01"
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  type: PropertyType;
+  status: PropertyStatus;
+  totalRooms: number;
+  starRating: number;
+  region: string; // e.g. "South India", "North India"
+  brand?: string; // e.g. "Luxury Collection"
+  amenities: string[];
+  contactPhone: string;
+  contactEmail: string;
+  image?: string;
+  coordinates?: { lat: number; lng: number };
+  // Live stats (computed)
+  currentOccupancy?: number;
+  monthlyRevenue?: number;
+  avgRating?: number;
+  createdAt: string;
 }
 
 // Room Types
@@ -24,6 +60,7 @@ export interface Room {
   amenities: string[];
   description?: string;
   images?: string[];
+  propertyId?: string;
 }
 
 // Booking Types
@@ -39,9 +76,10 @@ export interface Booking {
   totalAmount: number;
   paidAmount: number;
   notes?: string;
-  source: 'direct' | 'website' | 'airbnb' | 'booking_com' | 'expedia' | 'oyo';
+  source: 'direct' | 'website' | 'airbnb' | 'booking_com' | 'expedia' | 'oyo' | 'agoda' | 'makemytrip';
   createdAt: string;
   updatedAt: string;
+  propertyId?: string;
 }
 
 // Event Types
@@ -117,6 +155,8 @@ export interface EventFoodPlan {
 }
 
 // Guest Types
+export type LoyaltyTier = 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond';
+
 export interface Guest {
   id: string;
   name: string;
@@ -126,6 +166,10 @@ export interface Guest {
   idType?: 'passport' | 'national_id' | 'driver_license';
   idNumber?: string;
   preferences: GuestPreferences;
+  loyaltyPoints?: number;
+  loyaltyTier?: LoyaltyTier;
+  totalStays?: number;
+  totalSpend?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -179,7 +223,7 @@ export interface Payment {
 }
 
 // Integration Types
-export type IntegrationPlatform = 'airbnb' | 'booking_com' | 'expedia' | 'google_calendar' | 'website' | 'oyo';
+export type IntegrationPlatform = 'airbnb' | 'booking_com' | 'expedia' | 'google_calendar' | 'website' | 'oyo' | 'agoda' | 'makemytrip';
 export type SyncStatus = 'active' | 'paused' | 'error' | 'disconnected';
 
 export interface Integration {
@@ -218,6 +262,71 @@ export interface SyncLog {
   createdAt: string;
 }
 
+// Alert Types
+export type AlertSeverity = 'critical' | 'high' | 'medium' | 'low';
+export type AlertCategory = 'revenue' | 'rating' | 'cancellation' | 'vip' | 'payment' | 'staff' | 'maintenance' | 'system';
+
+export interface Alert {
+  id: string;
+  title: string;
+  message: string;
+  severity: AlertSeverity;
+  category: AlertCategory;
+  propertyId?: string;
+  propertyName?: string;
+  isRead: boolean;
+  createdAt: string;
+  resolvedAt?: string;
+}
+
+// Staff Types
+export type StaffDepartment = 'front_desk' | 'housekeeping' | 'restaurant' | 'events' | 'maintenance' | 'management' | 'security' | 'spa';
+export type StaffStatus = 'active' | 'on_leave' | 'off_duty';
+
+export interface StaffMember {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: string;
+  department: StaffDepartment;
+  propertyId: string;
+  status: StaffStatus;
+  shift: 'morning' | 'afternoon' | 'night';
+  joinDate: string;
+  salary?: number;
+  avatar?: string;
+}
+
+// Reputation Types
+export type ReviewPlatform = 'google' | 'tripadvisor' | 'booking_com' | 'expedia' | 'agoda';
+export type SentimentType = 'positive' | 'neutral' | 'negative';
+
+export interface ReputationReview {
+  id: string;
+  propertyId: string;
+  platform: ReviewPlatform;
+  guestName: string;
+  rating: number; // 1-5
+  title: string;
+  comment: string;
+  sentiment: SentimentType;
+  categories: string[]; // e.g. ['cleanliness', 'service', 'food']
+  response?: string;
+  createdAt: string;
+}
+
+export interface PropertyReputation {
+  propertyId: string;
+  propertyName: string;
+  overallRating: number;
+  totalReviews: number;
+  ratingBreakdown: { platform: ReviewPlatform; rating: number; count: number }[];
+  sentimentBreakdown: { positive: number; neutral: number; negative: number };
+  recentReviews: ReputationReview[];
+  trend: number; // positive = improving, negative = declining
+}
+
 // Dashboard Types
 export interface DashboardStats {
   totalRooms: number;
@@ -229,6 +338,41 @@ export interface DashboardStats {
   upcomingEvents: number;
   monthlyRevenue: number;
   pendingPayments: number;
+}
+
+export interface ChainStats {
+  totalProperties: number;
+  activeProperties: number;
+  totalRooms: number;
+  chainOccupancy: number;
+  chainRevenue: number;
+  chainRevPAR: number;
+  chainADR: number;
+  chainNPS: number;
+  totalGuests: number;
+  totalBookings: number;
+  cancellationRate: number;
+  netGrowth: number;
+  pendingAlerts: number;
+}
+
+export interface PropertyPerformance {
+  propertyId: string;
+  propertyName: string;
+  city: string;
+  region: string;
+  type: PropertyType;
+  status: PropertyStatus;
+  totalRooms: number;
+  occupancy: number;
+  revenue: number;
+  revPAR: number;
+  adr: number;
+  rating: number;
+  totalReviews: number;
+  growth: number; // % vs last month
+  rank: number;
+  revenueHistory: number[]; // last 6 months sparkline
 }
 
 export interface RevenueData {
